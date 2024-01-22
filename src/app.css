@@ -19,6 +19,7 @@ a {
   color: #646cff;
   text-decoration: inherit;
 }
+
 a:hover {
   color: #535bf2;
 }
@@ -38,6 +39,8 @@ h1 {
 
 .card {
   padding: 2em;
+  border: 2px solid #242424;
+  margin: 5px 0;
 }
 
 #app {
@@ -58,9 +61,11 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -71,10 +76,19 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
   }
+}
+
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  justify-content: space-around;
 }
