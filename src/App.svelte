@@ -9,7 +9,7 @@
 
   <h2 class="hangout-button">+ Add Hangout +</h2>
   <hr />
-  <div class="flex-row">
+  <div class="flex flex-row justify-around">
     <h2>Sort By</h2>
     <h2>Filter</h2>
     <h2>Is Offline</h2>

@@ -41,6 +41,7 @@ h1 {
   padding: 2em;
   border: 2px solid #242424;
   margin: 5px 0;
+  border-radius: 10px;
 }
 
 #app {
@@ -86,9 +87,39 @@ button:focus-visible {
   }
 }
 
-.flex-row {
+.flex {
   display: flex;
+}
+
+.flex-row {
   flex-direction: row;
-  gap: 20px;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-around {
   justify-content: space-around;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.align-center {
+  align-items: center;
+}
+
+.gap-5 {
+  gap: 1.25rem;
+}
+
+.grow {
+  flex-grow: 1;
 }
