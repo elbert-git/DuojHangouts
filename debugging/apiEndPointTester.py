@@ -9,10 +9,10 @@ clear_console()
 # define url
 url = "http://localhost:8000/hangouts/"
 
-# # read all endpoint 
-# print("------------- Reading all entries")
-# response = requests.post(url + "readAll/")
-# print(response.text)
+# read all endpoint 
+print("------------- Reading all entries")
+response = requests.get(url + "dev_readAll/")
+print(response.text)
 
 # create one entry
 # print("------------- Creating one hangout entry")
@@ -32,25 +32,19 @@ url = "http://localhost:8000/hangouts/"
 # header = {"Content-Type": "application/json"}
 # json_payload = json.dumps(data)
 # # make request
-# response = requests.post(url + "createHangout/", data=json_payload, headers=header)
+# response = requests.post(url + "dev_createHangout/", data=json_payload, headers=header)
 # print(response.text)
 
 # read one specific entry
 # print("------------- reading one specific entry")
-# # create payload
-# data = {
-#   'pk': 1,
-# }
-# header = {"Content-Type": "application/json"}
-# json_payload = json.dumps(data)
 # # make request
-# response = requests.post(url + "readOne/", data=json_payload, headers=header)
+# response = requests.get(url + "dev_readOne/12/")
 # print(response.text)
 
 # # update one entry
 # print("------------- updating one hangout entry")
 # # create payload
-# edited_entries = {
+# data = {
 #   'name':'this is edited',
 #   'location': 'ang mo kio block 230',
 #   'googlePin': 'https://google.com',
@@ -60,34 +54,24 @@ url = "http://localhost:8000/hangouts/"
 #   'isOffline':True,
 #   'hasBeenDone': True,
 # }
-# data = {
-#   'editingPk': 3,
-#   'newParameters': edited_entries
-# }
 # header = {"Content-Type": "application/json"}
 # json_payload = json.dumps(data)
 # # make request
-# response = requests.post(url + "updateOne/", data=json_payload, headers=header)
+# response = requests.put(url + "dev_updateOne/12/", data=json_payload, headers=header)
 # print(response.text)
 
-# delete one specific entry
+# # delete one specific entry
 # print("------------- deleting one specific entry")
-# # create payload
-# data = {
-#   'pk': 4,
-# }
-# header = {"Content-Type": "application/json"}
-# json_payload = json.dumps(data)
 # # make request
-# response = requests.post(url + "deleteOne/", data=json_payload, headers=header)
+# response = requests.delete(url + "dev_deleteOne/12/")
 # print(response.text)
 
 # * ----------------------------- dev stuff
 
-# read all endpoint dev
-print("------------- Reading all entries (for dev)")
-response = requests.post(url + "dev_readAll/")
-print(response.text)
+# # read all endpoint dev
+# print("------------- Reading all entries (for dev)")
+# response = requests.post(url + "dev_readAll/")
+# print(response.text)
 
 # delete all endpoint dev
 # print("------------- delete all data (for dev)")
