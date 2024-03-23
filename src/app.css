@@ -1,3 +1,14 @@
+*{box-sizing: border-box;}
+html, body, #app, .main{
+  height: 100%;
+  width: 100%;
+  overflow-y: hidden;
+}
+.root{
+  height: 100%;
+  overflow-y: scroll;
+}
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -45,7 +56,7 @@ h1 {
 }
 
 #app {
-  max-width: 1280px;
+  max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
@@ -123,3 +134,11 @@ button:focus-visible {
 .grow {
   flex-grow: 1;
 }
+
+
+
+
+
+
+/* for debugging */
+/* *{outline: rgba(255, 0, 0, 0.363) 1px solid;}  */

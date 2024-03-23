@@ -1,29 +1,44 @@
 <script>
   import hangoutLogo from '/android-chrome-192x192.png';
-  import Counter from './lib/Counter.svelte';
+  import HangoutEntry from './lib/HangoutEntry.svelte';
+  import PopUpModal from './lib/common/PopUpModal.svelte';
+  import HangoutForm from './lib/HangoutForm.svelte';
+
+  // states
+  let newEntrySlideUp = false;
+  let allHangouts = {}
+  // event callbacks
+  const toggleNewEntryModal = (bool)=>{newEntrySlideUp = bool}
 </script>
 
-<main>
-  <img src={hangoutLogo} class="logo svelte" alt="Hangout Logo" />
-  <h1>Duoj Hangouts</h1>
+<main class="main">
+  <!-- root div to suppor pop up -->
+  <div class="root">
+    <img src={hangoutLogo} class="logo svelte" alt="Hangout Logo" />
+    <h1>Duoj Hangouts</h1>
+    <h2 class="hangout-button" on:pointerup={()=>{toggleNewEntryModal(true)}}>+ Add Hangout +</h2>
+    <hr />
+    <div class="flex flex-row justify-around">
+      <h2>Sort By</h2>
+      <h2>Filter</h2>
+      <h2>Is Offline</h2>
+      <input type="radio" />
+    </div>
+    <div class="card">
+      <HangoutEntry />
+    </div>
+    <div class="card">
+      <HangoutEntry />
+    </div>
+    <div class="card">
+      <HangoutEntry />
+    </div>
+  </div>
 
-  <h2 class="hangout-button">+ Add Hangout +</h2>
-  <hr />
-  <div class="flex flex-row justify-around">
-    <h2>Sort By</h2>
-    <h2>Filter</h2>
-    <h2>Is Offline</h2>
-    <input type="radio" />
-  </div>
-  <div class="card">
-    <Counter />
-  </div>
-  <div class="card">
-    <Counter />
-  </div>
-  <div class="card">
-    <Counter />
-  </div>
+  <!-- pop up modals -->
+  <PopUpModal slideUp={newEntrySlideUp} toggleModal={toggleNewEntryModal}>
+    <HangoutForm></HangoutForm>
+  </PopUpModal>
 </main>
 
 <style>
@@ -46,3 +61,4 @@
     cursor: pointer;
   }
 </style>
+

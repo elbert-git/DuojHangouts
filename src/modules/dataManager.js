@@ -33,7 +33,7 @@ export default class DataManager{
     const resText = await response.text()
     return resText
   }
-  static async updateOne(pk,payload){
+  static async updateOneHangout(pk,payload){
     const endPoint = DataManager.isDevelopment ? "dev_updateOne/" : "updateOne/";
     const finalUrl = DataManager.baseUrl + endPoint + `${pk}/`;
     const response = await fetch(finalUrl, {method:"PUT", body:JSON.stringify(payload)})
