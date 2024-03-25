@@ -1,0 +1,36 @@
+<script>
+  import { EmojiButton } from "@joeattardi/emoji-button";
+  import { createEventDispatcher } from "svelte";
+
+  const dispatch = createEventDispatcher();
+
+  export let picked = null
+
+  const picker = new EmojiButton();
+  let trigger;
+
+  picker.on("emoji", selection => {
+    dispatch("change", selection);
+    picked = selection.emoji
+  });
+
+  function togglePicker() {
+    picker.togglePicker(trigger);
+  }
+</script>
+
+<button bind:this={trigger} on:click={togglePicker}>
+  {picked ? picked : "📌"}
+</button>
+
+<style>
+  button{
+    height: 5rem;
+    font-size: 2rem;
+    width: 5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
+  }
+</style>
