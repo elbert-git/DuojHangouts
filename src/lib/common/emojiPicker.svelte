@@ -5,6 +5,9 @@
   const dispatch = createEventDispatcher();
 
   export let picked = null
+  export let onPicked = (emoji)=>{
+    console.log(`picker picked ${emoji}`)
+  }
 
   const picker = new EmojiButton();
   let trigger;
@@ -12,6 +15,7 @@
   picker.on("emoji", selection => {
     dispatch("change", selection);
     picked = selection.emoji
+    onPicked(picked);
   });
 
   function togglePicker() {

@@ -1,6 +1,54 @@
 <script>
+  import { tagChoices } from "../modules/constants";
   import Toggle from "./common/toggle.svelte";
   import EmojiPicker from "./common/emojiPicker.svelte";
+  import DataManager from "../modules/dataManager";
+
+  // get elemetns
+  let nameInput;
+  let LocationInput;
+  let googlePinInput;
+  let tagInput;
+
+  // handle isOffline toggle
+  let isOfflineState = true;
+  const isOfflineToggleClicked = (bool)=>{isOfflineState=bool}
+
+  // handle emoji picker 
+  let pickedEmoji = "📌";
+  const onEmojiPicked = (emoji)=>{pickedEmoji = emoji}
+
+  // handle tag select
+  let tagSelected;
+  let elSelectTag;
+  const onTagSelected = ()=>{
+    console.log(elSelectTag.selectedIndex);
+  }
+  const onSelectTagFocused = ()=>{
+    elSelectTag.selectedIndex = 0;
+  }
+
+  // on save button clicked
+  const onSaveButtonClicked = ()=>{
+    // get values
+    const tagLabels = Object.keys(tagChoices)
+    const payload = {
+      name:nameInput.value,
+      location: LocationInput.value,
+      googlePin: googlePinInput.value,
+      emojiIcon:pickedEmoji,
+      votes: 1,
+      tag: tagLabels[elSelectTag.selectedIndex],
+      isOffline: isOfflineState,
+      hasBeenDone: false
+    }
+    // validate values
+    console.log(payload);
+    // todo data manage send payload to create
+    // DataManager.createHangout(payload)
+  }
+
+
 </script>
 
 <div class="root">
@@ -8,17 +56,17 @@
     <h1>Add Hangout</h1>
     <!-- main body -->
     <div class="row">
-      <EmojiPicker></EmojiPicker>
+      <EmojiPicker onPicked={onEmojiPicked}></EmojiPicker>
       <div class="emojiPickerLabel">Pick Emoji</div>
     </div>
     <div class="label name">Name</div>
-    <input type="text" name="" id="">
+    <input bind:this={nameInput} type="text" name="" id="">
     <div class="offlineAndTagParent">
       <!-- for offline toggle and parent -->
-      <Toggle label="Is Offline" initialState={true}></Toggle>
+      <Toggle label="Is Offline" initialState={isOfflineState} onToggle={isOfflineToggleClicked}></Toggle>
       <div class="row">
         <div>Tag</div>
-        <select name="" id="">
+        <select on:focus={onSelectTagFocused} on:change={onTagSelected} bind:this={elSelectTag}>
           <option value="" disabled selected>Select</option>
           <option value="">Food</option>
           <option value="">Gaming</option>
@@ -33,10 +81,10 @@
       </div>
     </div>
     <div class="label name">Location</div>
-    <input type="text" name="" id="">
+    <input bind:this={LocationInput} type="text" name="" id="">
     <div class="label name">Google Pin Link</div>
-    <input type="text" name="" id="">
-    <button>Save</button>
+    <input bind:this={googlePinInput} type="text" name="" id="">
+    <button on:pointerup={onSaveButtonClicked}>Save</button>
   </div>
 </div>
 
@@ -87,3 +135,4 @@
   }
 
 </style>
+
