@@ -8,7 +8,7 @@
   <div class={slideUp ? "bg overlay" : "bg overlay bg-slideDown"} on:pointerup={()=>{toggleModal(false)}}></div>
   <div class={slideUp ? "slider" : "slider slider-slideDown"}>
     <slot>child</slot>
-    <button on:pointerup={()=>{toggleModal(false)}}>return</button>
+    <button class="brutalButton" on:pointerup={()=>{toggleModal(false)}}>return</button>
   </div>
 </div>
 

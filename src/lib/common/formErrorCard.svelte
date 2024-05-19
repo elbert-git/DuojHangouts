@@ -15,7 +15,7 @@
 <style>
   .errorCardRoot{
     background-color: #ffbbb5;
-    color: #ff2f00;
+    color: black;
     transition: 0.3s;
     padding: 1rem;
     margin: 1rem 0rem;

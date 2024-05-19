@@ -44,7 +44,7 @@
 
   <!-- pop up modals -->
   <PopUpModal slideUp={newEntrySlideUp} toggleModal={toggleNewEntryModal}>
-    <HangoutForm></HangoutForm>
+    <HangoutForm slideDown={()=>{toggleNewEntryModal(false)}}></HangoutForm>
   </PopUpModal>
 </div>
 

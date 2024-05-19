@@ -10,6 +10,7 @@
   let LocationInput;
   let googlePinInput;
   let tagInput;
+  export let slideDown = ()=>{}
 
   // handle isOffline toggle
   let isOfflineState = true;
@@ -23,7 +24,7 @@
   let tagSelected = 0;
   let elSelectTag;
   const onTagSelected = ()=>{
-    console.log(elSelectTag.selectedIndex);
+    // console.log(elSelectTag.selectedIndex);
   }
   const onSelectTagFocused = ()=>{
     elSelectTag.selectedIndex = 0;
@@ -47,9 +48,16 @@
     }
     // validate values
     const validationReport = DataManager.validateDataPayload(payload);
-    console.log(validationReport);
-    // handle showing errors
-    if(!validationReport.overallPassed){
+
+    // handle fail and success of validationt
+    if(validationReport.overallPassed){ // attempt send to backend
+        showErrors = false;
+        // successfull payload
+        // [] send to back end
+        DataManager.createHangout(payload).then((res)=>{console.log(res)})
+        resetForm();
+        slideDown();
+    }else{ // 
       const listOfErrorMessages = []
       Object.keys(validationReport).forEach((key)=>{
         if(key !== 'overallPassed'){
@@ -60,15 +68,15 @@
       })
       showErrors = true;
       allErrors = listOfErrorMessages;
-      console.log('all error',allErrors)
-    }else{
-      showErrors = false;
     }
 
-    // successfull payload
-    // [] send to back end
-    // DataManager.createHangout(payload)
-    // [] clear forms
+  }
+
+  const resetForm = ()=>{
+    nameInput.value = ''
+    LocationInput.value = ''
+    googlePinInput.value = ''
+    elSelectTag.selectedIndex = 0;
   }
 </script>
 
@@ -79,7 +87,7 @@
     <FormErrorCard show={showErrors} allErrors={allErrors}></FormErrorCard>
     <!-- main body -->
     <div class="row">
-      <EmojiPicker onPicked={onEmojiPicked}></EmojiPicker>
+      <EmojiPicker onPicked={onEmojiPicked} picked={pickedEmoji}></EmojiPicker>
       <div class="emojiPickerLabel">Pick Emoji</div>
     </div>
     <div class="label name">Name</div>
@@ -107,7 +115,7 @@
     <input bind:this={LocationInput} type="text" name="" id="">
     <div class="label name">Google Pin Link</div>
     <input bind:this={googlePinInput} type="text" name="" id="">
-    <button class="brutalButton" on:pointerup={onSaveButtonClicked}>Save</button>
+    <button class="brutalButton saveButton" on:pointerup={onSaveButtonClicked}>Save</button>
   </div>
 </div>
 
@@ -159,6 +167,10 @@
     text-align: left;
     font-size: 1.5rem;
     font-weight: 500;
+  }
+
+  .saveButton{
+    margin-top: 1rem ;
   }
 </style>
 
