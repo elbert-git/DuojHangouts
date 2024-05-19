@@ -3,6 +3,7 @@
   import Toggle from "./common/toggle.svelte";
   import EmojiPicker from "./common/emojiPicker.svelte";
   import DataManager from "../modules/dataManager";
+  import FormErrorCard from "./common/formErrorCard.svelte";
 
   // get elemetns
   let nameInput;
@@ -19,7 +20,7 @@
   const onEmojiPicked = (emoji)=>{pickedEmoji = emoji}
 
   // handle tag select
-  let tagSelected;
+  let tagSelected = 0;
   let elSelectTag;
   const onTagSelected = ()=>{
     console.log(elSelectTag.selectedIndex);
@@ -29,6 +30,8 @@
   }
 
   // on save button clicked
+  let allErrors = []
+  let showErrors = false
   const onSaveButtonClicked = ()=>{
     // get values
     const tagLabels = Object.keys(tagChoices)
@@ -38,22 +41,42 @@
       googlePin: googlePinInput.value,
       emojiIcon:pickedEmoji,
       votes: 1,
-      tag: tagLabels[elSelectTag.selectedIndex],
+      tag: tagLabels[elSelectTag.selectedIndex - 1],
       isOffline: isOfflineState,
       hasBeenDone: false
     }
     // validate values
-    console.log(payload);
-    // todo data manage send payload to create
+    const validationReport = DataManager.validateDataPayload(payload);
+    console.log(validationReport);
+    // handle showing errors
+    if(!validationReport.overallPassed){
+      const listOfErrorMessages = []
+      Object.keys(validationReport).forEach((key)=>{
+        if(key !== 'overallPassed'){
+          if(validationReport[key].error !== ''){
+            listOfErrorMessages.push(validationReport[key].error)
+          }
+        }
+      })
+      showErrors = true;
+      allErrors = listOfErrorMessages;
+      console.log('all error',allErrors)
+    }else{
+      showErrors = false;
+    }
+
+    // successfull payload
+    // [] send to back end
     // DataManager.createHangout(payload)
+    // [] clear forms
   }
-
-
 </script>
 
 <div class="root">
-  <div class="card">
-    <h1>Add Hangout</h1>
+  <div class="card scroll">
+    <h1 class="notable">Add Hangout</h1>
+    <hr>
+    <FormErrorCard show={showErrors} allErrors={allErrors}></FormErrorCard>
     <!-- main body -->
     <div class="row">
       <EmojiPicker onPicked={onEmojiPicked}></EmojiPicker>
@@ -84,7 +107,7 @@
     <input bind:this={LocationInput} type="text" name="" id="">
     <div class="label name">Google Pin Link</div>
     <input bind:this={googlePinInput} type="text" name="" id="">
-    <button on:pointerup={onSaveButtonClicked}>Save</button>
+    <button class="brutalButton" on:pointerup={onSaveButtonClicked}>Save</button>
   </div>
 </div>
 
@@ -98,11 +121,14 @@
     align-items: center;
     justify-content: center;
     overflow: hidden;
+
+    padding-top: 1.5rem;
   }
 
   .card{
     max-width: 800px;
     width: 100%;
+    max-height: 80vh !important;
     background-color: white;
     border-radius: 1rem;
   }
@@ -132,7 +158,7 @@
     width: 100%;
     text-align: left;
     font-size: 1.5rem;
+    font-weight: 500;
   }
-
 </style>
 

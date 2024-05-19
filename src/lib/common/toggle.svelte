@@ -55,4 +55,7 @@
     left:1rem;
     opacity: 1;
   }
+  .label{
+    font-weight: 500;
+  }
 </style>

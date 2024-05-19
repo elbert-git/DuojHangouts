@@ -1,7 +1,7 @@
 <script>
   // props
   export let slideUp = false;
-  export let toggleModal = null
+  export let toggleModal = (bool)=>{}
 </script>
 
 <div class="overlay">
@@ -21,6 +21,10 @@
 
     position: absolute;
     top: 0vh; left:0;
+
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
   }
 
   .bg{
@@ -40,6 +44,10 @@
     position: relative;
     top:0vh;
     transition: 0.3s;
+    max-width: 800px;
+    width: 100%;
+    /* pointer-events: none; */
+    padding: 0rem 0.5rem;
   }
   .slider-slideDown{
     top:130vh !important;
