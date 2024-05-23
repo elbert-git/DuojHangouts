@@ -21,8 +21,8 @@ def create_hangout(request):
       emoji_icon = json_payload['emojiIcon'],
       votes = json_payload['votes'],
       tag =  json_payload['tag'],
-      created_at = json_payload['createdAt'],
-      last_edited = json_payload['lastEdited'],
+      created_at = time.time(),
+      last_edited = time.time(),
       is_offline = json_payload['isOffline'],
       has_been_done = json_payload['hasBeenDone']
     )
@@ -162,8 +162,8 @@ def dev_create_hangout(request):
       emoji_icon = json_payload['emojiIcon'],
       votes = json_payload['votes'],
       tag =  json_payload['tag'],
-      created_at = json_payload['createdAt'],
-      last_edited = json_payload['lastEdited'],
+      created_at = time.time(),
+      last_edited = time.time(),
       is_offline = json_payload['isOffline'],
       has_been_done = json_payload['hasBeenDone']
     )
