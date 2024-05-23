@@ -28,6 +28,7 @@ CORS_ALLOW_ALL_ORIGINS = DEBUG
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
+    "http://192.53.113.254:3535"
 ]
 
 
