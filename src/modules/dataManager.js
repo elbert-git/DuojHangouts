@@ -32,7 +32,7 @@ export default class DataManager {
     static async createHangout(payload) {
         const endPoint = DataManager.isDevelopment ? "dev_createHangout/" : "createHangout/";
         const finalUrl = DataManager.baseUrl + endPoint;
-        const response = await fetch(finalUrl, { method: "POST", body: JSON.stringify(payload) })
+        const response = await fetch(finalUrl, { method: "POST", body: JSON.stringify(payload), })
         const resText = await response.text()
         return resText
     }

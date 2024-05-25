@@ -10,7 +10,24 @@ DataManager.init(isDevelopment, baseUrl);
 
 // --- start svelte
 const app = new App({
-  target: document.getElementById('app'),
+    target: document.getElementById('app'),
+})
+
+window.addEventListener('keydown', (e) => {
+    if (e.key === "@") {
+        console.log('attempt dev clear data');
+        (async () => {
+            const res = await DataManager.deleteAllDevHangouts()
+            console.log(res)
+        })()
+    }
+    if (e.key === "#") {
+        console.log('attempt dummy data created');
+        (async () => {
+            const res = await DataManager.createDummyDataset()
+            console.log(res)
+        })()
+    }
 })
 
 export default app
