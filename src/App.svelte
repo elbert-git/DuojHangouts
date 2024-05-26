@@ -44,11 +44,11 @@
         </div>
       </div>
       <div class="hangoutsList">
-        <div class="card">
-          {#each allHangouts as item (item.pk)}
+        {#each allHangouts as item (item.pk)}
+          <div class="card">
             <HangoutEntry hangout_fields={item.fields} />
-          {/each}
-        </div>
+          </div>
+        {/each}
       </div>
     </div>
   </div>
