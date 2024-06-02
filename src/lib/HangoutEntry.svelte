@@ -3,13 +3,25 @@
   let upvoted = false;
   let downvoted = false;
   export let hangout_fields;
+
+  function handleUpvote(pk) {
+    // handle upvote pk update here!
+    // update PK's upvote count
+    upvoted = true;
+  }
+
+  function handleDownvote(pk) {
+    // handle upvote pk update here!
+    // update PK's downvote count!
+    downvoted = true;
+  }
   import EmojiPicker from './common/emojiPicker.svelte';
 </script>
 
 <div class="flex gap-5 justify-around align-center">
   <div class="flex flex-row gap-5 justify-center">
     <div>
-      <button on:click={() => (upvoted = !upvoted)}
+      <button on:click={handleUpvote}
         ><i
           class="fa-solid fa-up-long fa-lg font-hover"
           class:active={upvoted === true}
@@ -19,10 +31,7 @@
     </div>
     <div style="align-self: center;">{hangout_fields.votes}</div>
     <div>
-      <button
-        class:active={downvoted === true}
-        on:click={() => (downvoted = !downvoted)}
-      >
+      <button class:active={downvoted === true} on:click={handleDownvote}>
         <i
           class:active={downvoted === true}
           class="fa-solid fa-down-long fa-lg font-hover"
