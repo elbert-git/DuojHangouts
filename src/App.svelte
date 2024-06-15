@@ -45,9 +45,7 @@
       </div>
       <div class="hangoutsList">
         {#each allHangouts as item (item.pk)}
-          <div class="card">
             <HangoutEntry hangout_fields={item.fields} />
-          </div>
         {/each}
       </div>
     </div>

@@ -226,3 +226,16 @@ button:focus-visible {
 /* * {
   background-color: rgba(255, 0, 0, 0.096);
 } */
+
+.interactive {
+  pointer-events: auto;
+  cursor: pointer;
+  transition: 0.3s;
+  transform: scale(1);
+}
+.interactive:hover {
+  transform: scale(1.1);
+}
+.interactive:active {
+  transform: scale(0.9);
+}

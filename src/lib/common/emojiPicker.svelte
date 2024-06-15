@@ -37,6 +37,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid black;
+    border: 2px solid black;
   }
 </style>

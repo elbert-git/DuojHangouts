@@ -147,13 +147,16 @@
 
   .topRow{
     width: 100%;
-
     display:  flex;
     justify-content: space-between;
   }
 
   input{
     width: 100%;
+  }
+
+  input[type=text]{
+    border: 2px solid #213547;
   }
 
   .offlineAndTagParent{
@@ -171,6 +174,10 @@
 
   .saveButton{
     margin-top: 1rem ;
+  }
+
+  .emojiPickerLabel{
+    font-weight: 600 ;
   }
 </style>
 
