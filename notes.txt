@@ -1,2 +1,17 @@
 Status: just finished the server and sheets crud
 
+todo:
+
+> setup the front end
+    react
+    shadcn
+> pinch the body to the center
+> setup react router
+
+
+>>> setup auth function
+    > in front end create sign in route
+    > in backend create /login route
+    >> just return an access token for now
+    >> create auth state
+    
