@@ -1,9 +1,24 @@
 import express from "express";
+import cors from "cors";
 import { HangoutsSheet } from "./sheets";
+import { DuojAuth } from "./auth";
 
 const createServer = () => {
     const app = express();
+    app.use(cors());
     app.use(express.json());
+
+    app.post("/login", async (req, res) => {
+        // get the password from req.body.password
+        const { password } = req.body;
+        // return the result from DuojAuth.CheckPassword
+        const result = await DuojAuth.checkPassword(password);
+        if (result.success) {
+            res.json(result);
+        } else {
+            res.status(401).json(result);
+        }
+    });
 
     // 1. readAll
     app.get("/hangouts", async (req, res) => {
