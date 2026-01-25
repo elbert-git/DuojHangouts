@@ -21,4 +21,12 @@ export class DuojAuth {
             return { success: false, accessToken: null };
         }
     }
+
+    static verifyToken(token: string) {
+        try {
+            return jwt.verify(token, secrets.secret);
+        } catch (error) {
+            return null;
+        }
+    }
 }
