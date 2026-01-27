@@ -24,6 +24,7 @@ import { Button } from "../../components/ui/button";
 import HangoutEditor, {
   HangoutFormFields,
 } from "./subComponents/HangoutEditor";
+import { Separator } from "@radix-ui/react-dropdown-menu";
 
 const TAG_METADATA: Record<string, { color: string; icon: any }> = {
   food: { color: "bg-orange-500", icon: Utensils },
@@ -227,12 +228,12 @@ export default function DashboardRoute() {
           </div>
         </div>
 
-        <div className="relative">
+        <div className="relative grow">
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild className="w-full">
               <Button
                 variant="outline"
-                className="w-full md:w-48 h-12 bg-white border-gray-200 rounded-xl flex items-center justify-between text-gray-700 hover:bg-gray-50 transition-colors shadow-sm font-normal"
+                className="w-full  h-12 bg-white border-gray-200 rounded-xl flex items-center justify-between text-gray-700 hover:bg-gray-50 transition-colors shadow-sm font-normal"
               >
                 <span>{selectedCategory}</span>
                 <ChevronDown size={18} className="text-gray-400 opacity-50" />
@@ -240,7 +241,7 @@ export default function DashboardRoute() {
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-48 bg-white border-gray-100 rounded-xl shadow-lg"
+              className="w-full bg-white border-gray-100 rounded-xl shadow-lg"
             >
               {[
                 "All Categories",
@@ -331,6 +332,8 @@ export default function DashboardRoute() {
           <span>Add Idea</span>
         </Button>
       </div>
+
+      <div className="separator w-[calc(100%-8rem)] bg-zinc-300 h-[2px] mx-[4rem] mb-8 rounded-[0.5px]"></div>
 
       {/* List section */}
       <div className="max-w-4xl mx-auto px-4 flex flex-col gap-4">
