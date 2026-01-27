@@ -1,14 +1,14 @@
 import API, { HangoutRow } from "../../api";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router";
 import {
+  ArrowLeft,
+  ArrowRight,
   Search,
   Plus,
   MapPin,
   Utensils,
-  Trees,
   Sparkles,
-  Clapperboard,
   ChevronDown,
   Globe,
   CheckCircle2,
@@ -24,7 +24,9 @@ import { Button } from "../../components/ui/button";
 import HangoutEditor, {
   HangoutFormFields,
 } from "./subComponents/HangoutEditor";
-import { Separator } from "@radix-ui/react-dropdown-menu";
+
+const PAGE_SIZE_OPTIONS = [2, 6, 12, 18];
+const DEFAULT_ITEMS_PER_PAGE = PAGE_SIZE_OPTIONS[0];
 
 const TAG_METADATA: Record<string, { color: string; icon: any }> = {
   food: { color: "bg-orange-500", icon: Utensils },
@@ -126,6 +128,53 @@ export default function DashboardRoute() {
     tried: false,
     offline: false,
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
+
+  const filteredHangouts = useMemo(() => {
+    return hangouts.filter((h) => {
+      const matchesSearch =
+        h.name.toLowerCase().includes(search.toLowerCase()) ||
+        h.description.toLowerCase().includes(search.toLowerCase());
+      const matchesCategory =
+        selectedCategory === "All Categories" ||
+        h.tag.toLowerCase() === selectedCategory.toLowerCase();
+      const matchesStatus =
+        statusFilter === "All Status" ||
+        (statusFilter === "Online Only" && !h.offline) ||
+        (statusFilter === "Offline Only" && h.offline);
+      const matchesExperience =
+        experienceFilter === "All History" ||
+        (experienceFilter === "Tried Only" && h.tried) ||
+        (experienceFilter === "Never Tried" && !h.tried);
+
+      return (
+        matchesSearch && matchesCategory && matchesStatus && matchesExperience
+      );
+    });
+  }, [hangouts, search, selectedCategory, statusFilter, experienceFilter]);
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(filteredHangouts.length / itemsPerPage),
+  );
+  const paginatedHangouts = filteredHangouts.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
+  );
+  const pageStart =
+    filteredHangouts.length === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const pageEnd = Math.min(filteredHangouts.length, currentPage * itemsPerPage);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, selectedCategory, statusFilter, experienceFilter, itemsPerPage]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
 
   useEffect(() => {
     if (!API.isLoggedIn()) {
@@ -192,6 +241,9 @@ export default function DashboardRoute() {
         return [row, ...prev];
       }
     });
+    if (editorMode === "add") {
+      setCurrentPage(1);
+    }
   };
 
   const handleEditorClose = () => {
@@ -337,42 +389,64 @@ export default function DashboardRoute() {
 
       {/* List section */}
       <div className="max-w-4xl mx-auto px-4 flex flex-col gap-4">
-        {hangouts
-          .filter((h) => {
-            const matchesSearch =
-              h.name.toLowerCase().includes(search.toLowerCase()) ||
-              h.description.toLowerCase().includes(search.toLowerCase());
-            const matchesCategory =
-              selectedCategory === "All Categories" ||
-              h.tag.toLowerCase() === selectedCategory.toLowerCase();
-            const matchesStatus =
-              statusFilter === "All Status" ||
-              (statusFilter === "Online Only" && !h.offline) ||
-              (statusFilter === "Offline Only" && h.offline);
-            const matchesExperience =
-              experienceFilter === "All History" ||
-              (experienceFilter === "Tried Only" && h.tried) ||
-              (experienceFilter === "Never Tried" && !h.tried);
-
-            return (
-              matchesSearch &&
-              matchesCategory &&
-              matchesStatus &&
-              matchesExperience
-            );
-          })
-          .map((hangout) => (
-            <HangoutCard
-              key={hangout.id}
-              hangoutItem={hangout}
-              onEdit={openEditEditor}
-            />
-          ))}
-        {hangouts.length === 0 && (
+        {paginatedHangouts.map((hangout) => (
+          <HangoutCard
+            key={hangout.id}
+            hangoutItem={hangout}
+            onEdit={openEditEditor}
+          />
+        ))}
+        {filteredHangouts.length === 0 && (
           <div className="text-center py-20 text-gray-400">
             No hangout ideas found. Start adding some!
           </div>
         )}
+      </div>
+
+      <div className="max-w-4xl mx-auto px-4 mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="text-sm text-gray-500">
+          Showing {pageStart}-{pageEnd} of {filteredHangouts.length} ideas
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <span className="whitespace-nowrap">Per page</span>
+            <select
+              className="h-10 rounded-lg border border-gray-200 bg-white px-3 text-sm font-medium text-gray-700 shadow-sm outline-none focus:border-blue-500"
+              value={itemsPerPage}
+              onChange={(event) => setItemsPerPage(Number(event.target.value))}
+            >
+              {PAGE_SIZE_OPTIONS.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1"
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+            >
+              <ArrowLeft size={14} />
+              Prev
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1"
+              disabled={currentPage >= totalPages}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+              }
+            >
+              Next
+              <ArrowRight size={14} />
+            </Button>
+          </div>
+        </div>
       </div>
 
       <HangoutEditor
