@@ -5,7 +5,6 @@ import {
     Search,
     Plus,
     MapPin,
-    X,
     Utensils,
     Trees,
     Sparkles,
@@ -13,6 +12,9 @@ import {
     ChevronDown,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
+import HangoutEditor, {
+    HangoutFormFields,
+} from "./subComponents/HangoutEditor";
 
 const TAG_METADATA: Record<string, { color: string; icon: any }> = {
     food: { color: "bg-orange-500", icon: Utensils },
@@ -21,7 +23,13 @@ const TAG_METADATA: Record<string, { color: string; icon: any }> = {
     entertainment: { color: "bg-purple-500", icon: Sparkles },
 };
 
-function HangoutCard({ hangoutItem }: { hangoutItem: HangoutRow }) {
+function HangoutCard({
+    hangoutItem,
+    onEdit,
+}: {
+    hangoutItem: HangoutRow;
+    onEdit: (item: HangoutRow) => void;
+}) {
     const metadata = TAG_METADATA[hangoutItem.tag.toLowerCase()] || {
         color: "bg-gray-500",
         icon: Sparkles,
@@ -61,8 +69,11 @@ function HangoutCard({ hangoutItem }: { hangoutItem: HangoutRow }) {
                 {hangoutItem.description}
             </p>
 
-            <button className="absolute top-6 right-6 text-gray-300 hover:text-gray-500 transition-colors">
-                <X size={20} />
+            <button
+                className="absolute top-6 right-6 text-sm text-blue-600 font-semibold hover:text-blue-500 transition-colors"
+                onClick={() => onEdit(hangoutItem)}
+            >
+                Edit
             </button>
         </div>
     );
@@ -74,6 +85,19 @@ export default function DashboardRoute() {
     const [search, setSearch] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("All Categories");
     const [isCategoryOpen, setIsCategoryOpen] = useState(false);
+    const [isEditorOpen, setIsEditorOpen] = useState(false);
+    const [editorMode, setEditorMode] = useState<"add" | "edit">("add");
+    const [editingId, setEditingId] = useState<string | undefined>(undefined);
+    const [editorValues, setEditorValues] = useState<HangoutFormFields>({
+        name: "",
+        description: "",
+        location: "",
+        googleLink: "",
+        emoji: "🎉",
+        tag: "Other",
+        tried: false,
+        offline: false,
+    });
 
     useEffect(() => {
         if (!API.isLoggedIn()) {
@@ -94,6 +118,57 @@ export default function DashboardRoute() {
 
         fetchHangouts();
     }, [navigate]);
+
+    const openAddEditor = () => {
+        setEditorMode("add");
+        setEditingId(undefined);
+        setEditorValues({
+            name: "",
+            description: "",
+            location: "",
+            googleLink: "",
+            emoji: "🎉",
+            tag: "Other",
+            tried: false,
+            offline: false,
+        });
+        setIsEditorOpen(true);
+    };
+
+    const openEditEditor = (item: HangoutRow) => {
+        setEditorMode("edit");
+        setEditingId(item.id);
+        setEditorValues({
+            name: item.name,
+            description: item.description,
+            location: item.location,
+            googleLink: item.googleLink,
+            emoji: item.emoji,
+            tag: item.tag,
+            tried: item.tried,
+            offline: item.offline,
+        });
+        setIsEditorOpen(true);
+    };
+
+    const handleEditorSubmit = (row: HangoutRow) => {
+        setHangouts((prev) => {
+            const index = prev.findIndex((h) => h.id === row.id);
+            if (index !== -1) {
+                // Update existing
+                const updated = [...prev];
+                updated[index] = row;
+                return updated;
+            } else {
+                // Add new (typically to the beginning)
+                return [row, ...prev];
+            }
+        });
+    };
+
+    const handleEditorClose = () => {
+        setIsEditorOpen(false);
+    };
 
     return (
         <div className="dashboard w-full min-h-screen pb-20">
@@ -162,7 +237,10 @@ export default function DashboardRoute() {
                     )}
                 </div>
 
-                <button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-95">
+                <button
+                    onClick={openAddEditor}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"
+                >
                     <Plus size={20} />
                     <span>Add Idea</span>
                 </button>
@@ -186,7 +264,11 @@ export default function DashboardRoute() {
                         return matchesSearch && matchesCategory;
                     })
                     .map((hangout) => (
-                        <HangoutCard key={hangout.id} hangoutItem={hangout} />
+                        <HangoutCard
+                            key={hangout.id}
+                            hangoutItem={hangout}
+                            onEdit={openEditEditor}
+                        />
                     ))}
                 {hangouts.length === 0 && (
                     <div className="text-center py-20 text-gray-400">
@@ -194,6 +276,15 @@ export default function DashboardRoute() {
                     </div>
                 )}
             </div>
+
+            <HangoutEditor
+                open={isEditorOpen}
+                mode={editorMode}
+                id={editingId}
+                initialValues={editorValues}
+                onClose={handleEditorClose}
+                onSubmit={handleEditorSubmit}
+            />
         </div>
     );
 }

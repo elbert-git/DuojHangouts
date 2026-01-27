@@ -2,3 +2,4 @@
 *.env
 **/dist/*
 **/google-key.json
+/.opencode-context/
