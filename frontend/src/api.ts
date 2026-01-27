@@ -1,3 +1,17 @@
+export interface HangoutRow {
+    id: string;
+    name: string;
+    description: string;
+    location: string;
+    googleLink: string;
+    emoji: string;
+    tag: string;
+    tried: boolean;
+    offline: boolean;
+    upvotes: number;
+    dateCreated: string;
+}
+
 type apiStateCache = {
     accessToken: string | null;
 };
@@ -65,6 +79,131 @@ export default class API {
         } catch (error) {
             console.error("Login error:", error);
             return { success: false, accessToken: false };
+        }
+    }
+    static async getAllRows(): Promise<HangoutRow[]> {
+        try {
+            const response = await fetch(`${this.backendUrl}/hangouts`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${this.stateCache.accessToken}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.ok) {
+                return await response.json();
+            } else {
+                console.error("Failed to fetch hangouts:", response.statusText);
+                return [];
+            }
+        } catch (error) {
+            console.error("Error fetching hangouts:", error);
+            return [];
+        }
+    }
+
+    static async getRow(id: string): Promise<HangoutRow | null> {
+        try {
+            const response = await fetch(`${this.backendUrl}/hangouts/${id}`, {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${this.stateCache.accessToken}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.ok) {
+                return await response.json();
+            } else {
+                console.error(
+                    `Failed to fetch hangout ${id}:`,
+                    response.statusText,
+                );
+                return null;
+            }
+        } catch (error) {
+            console.error(`Error fetching hangout ${id}:`, error);
+            return null;
+        }
+    }
+
+    static async createRow(
+        data: Omit<HangoutRow, "id" | "dateCreated" | "upvotes">,
+    ): Promise<HangoutRow | null> {
+        try {
+            const response = await fetch(`${this.backendUrl}/hangouts`, {
+                method: "POST",
+                headers: {
+                    Authorization: `Bearer ${this.stateCache.accessToken}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                return await response.json();
+            } else {
+                console.error("Failed to create hangout:", response.statusText);
+                return null;
+            }
+        } catch (error) {
+            console.error("Error creating hangout:", error);
+            return null;
+        }
+    }
+
+    static async updateRow(
+        id: string,
+        data: Partial<HangoutRow>,
+    ): Promise<HangoutRow | null> {
+        try {
+            const response = await fetch(`${this.backendUrl}/hangouts/${id}`, {
+                method: "PATCH",
+                headers: {
+                    Authorization: `Bearer ${this.stateCache.accessToken}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (response.ok) {
+                return await response.json();
+            } else {
+                console.error(
+                    `Failed to update hangout ${id}:`,
+                    response.statusText,
+                );
+                return null;
+            }
+        } catch (error) {
+            console.error(`Error updating hangout ${id}:`, error);
+            return null;
+        }
+    }
+
+    static async deleteRow(id: string): Promise<boolean> {
+        try {
+            const response = await fetch(`${this.backendUrl}/hangouts/${id}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${this.stateCache.accessToken}`,
+                    "Content-Type": "application/json",
+                },
+            });
+
+            if (response.status === 204) {
+                return true;
+            } else {
+                console.error(
+                    `Failed to delete hangout ${id}:`,
+                    response.statusText,
+                );
+                return false;
+            }
+        } catch (error) {
+            console.error(`Error deleting hangout ${id}:`, error);
+            return false;
         }
     }
 }

@@ -1,12 +1,11 @@
-Status: just finished the login flow
+Status: Just visually rendered the cards
 
 todo:
 
->>> make all protected routes protected
-
-
 >>> creating the dashbaord
-    > render just text from server
+    >>> in design add the thumbs up button
+
+
+
+
     > create pagination
-    > create card component
-    > 

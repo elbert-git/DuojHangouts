@@ -10,7 +10,6 @@ body {
 }
 #root {
     width: 100%;
-    max-width: 500px;
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -130,6 +129,6 @@ body {
         @apply border-border outline-ring/50;
     }
     body {
-        @apply bg-background text-foreground;
+        @apply bg-[#f8faff] text-foreground;
     }
 }
