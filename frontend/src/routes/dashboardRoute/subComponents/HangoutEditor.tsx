@@ -103,10 +103,12 @@ export default function HangoutEditor({
         onClick={isSubmitting ? undefined : onClose}
       />
 
-      <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center px-4 pb-6 sm:pb-0 pointer-events-none">
+      <div
+        className={`fixed inset-0 z-50 flex items-end sm:items-center justify-center px-4 pb-6 sm:pb-0 ${open ? "pointer-events-auto" : "pointer-events-none"}`}
+      >
         <form
           onSubmit={handleSubmit}
-          className={`pointer-events-auto w-full max-w-2xl bg-white/90 backdrop-blur-xl border border-white/40 rounded-3xl shadow-2xl p-6 space-y-4 transform transition-all duration-300 ease-out sm:mx-4 ${
+          className={`w-full max-w-2xl bg-white/90 backdrop-blur-xl border border-white/40 rounded-3xl shadow-2xl p-6 space-y-4 transform transition-all duration-300 ease-out sm:mx-4 ${
             open ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
           }`}
         >

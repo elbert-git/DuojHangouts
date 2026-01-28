@@ -1,11 +1,16 @@
-Status: Just visually rendered the cards
+Status: added pagination
+
 
 todo:
+> fix overlay cursor capture
+> add logout feature 
+> auto route based on auth state
 
->>> creating the dashbaord
-    >>> in design add the thumbs up button
+>>> add upvote system
 
+>>  add delete feature
 
+> add sorting
 
+>>> add random page
 
-    > create pagination
