@@ -32,6 +32,7 @@ import HangoutEditor, {
   HangoutFormFields,
 } from "./subComponents/HangoutEditor";
 import { UpvoteHistory } from "../../UpvoteCache";
+import { EMOJI_OPTIONS, TAG_OPTIONS } from "../../constants";
 
 const PAGE_SIZE_OPTIONS = [6, 12, 18];
 const DEFAULT_ITEMS_PER_PAGE = PAGE_SIZE_OPTIONS[0];
@@ -174,8 +175,8 @@ export default function DashboardRoute() {
     description: "",
     location: "",
     googleLink: "",
-    emoji: "🎉",
-    tag: "Other",
+    emoji: EMOJI_OPTIONS[0],
+    tag: TAG_OPTIONS[0],
     tried: false,
     offline: false,
   });
@@ -293,8 +294,8 @@ export default function DashboardRoute() {
       description: "",
       location: "",
       googleLink: "",
-      emoji: "🎉",
-      tag: "Other",
+      emoji: EMOJI_OPTIONS[0],
+      tag: TAG_OPTIONS[0],
       tried: false,
       offline: false,
     });
@@ -442,13 +443,7 @@ export default function DashboardRoute() {
               align="end"
               className="w-full bg-white border-gray-100 rounded-xl shadow-lg"
             >
-              {[
-                "All Categories",
-                "food",
-                "outdoor",
-                "activity",
-                "entertainment",
-              ].map((category) => (
+              {["All Categories", ...TAG_OPTIONS].map((category) => (
                 <DropdownMenuItem
                   key={category}
                   onClick={() => setSelectedCategory(category)}

@@ -2,14 +2,12 @@ import { useEffect, useState } from "react";
 import { X, Loader2 } from "lucide-react";
 import API, { HangoutRow } from "../../../api";
 import { toast } from "sonner";
+import { EMOJI_OPTIONS, TAG_OPTIONS } from "../../../constants";
 
 export type HangoutFormFields = Omit<
   HangoutRow,
   "id" | "dateCreated" | "upvotes"
 >;
-
-const EMOJI_OPTIONS = ["🎉", "🍕", "🌿", "🎭", "🍹", "🛶", "🧭", "🍔", "🏕️"];
-const TAG_OPTIONS = ["Other", "food", "outdoor", "activity", "entertainment"];
 
 interface HangoutEditorProps {
   open: boolean;
@@ -352,7 +350,7 @@ export default function HangoutEditor({
             disabled={isSubmitting || isDeleting}
             className="w-full rounded-2xl px-4 py-3 font-semibold shadow-lg transition bg-gradient-to-r from-sky-500 to-indigo-500 text-white disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            {(isSubmitting && !isDeleting) && (
+            {isSubmitting && !isDeleting && (
               <Loader2 size={18} className="animate-spin" />
             )}
             {mode === "add" ? "Add Idea" : "Save Changes"}
