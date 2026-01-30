@@ -45,9 +45,28 @@ export class UpvoteHistory {
   static saveId(id: string) {
     if (!this.isIDInHistory(id)) {
       this.cache.data.push(id);
-       if (this.cache.data.length > this.MAX_ENTRIES) {
-         this.cache.data = this.cache.data.slice(-this.MAX_ENTRIES);
-       }
+      if (this.cache.data.length > this.MAX_ENTRIES) {
+        this.cache.data = this.cache.data.slice(-this.MAX_ENTRIES);
+      }
+      try {
+        localStorage.setItem(
+          this.localStorageKey,
+          JSON.stringify(this.cache.data),
+        );
+      } catch (e) {
+        console.error("Failed to save upvote cache", e);
+      }
+    }
+  }
+
+  /**
+   * Remove an ID from the cache and persist the change.
+   * If the ID does not exist, the method does nothing.
+   */
+  static removeId(id: string) {
+    const index = this.cache.data.indexOf(id);
+    if (index !== -1) {
+      this.cache.data.splice(index, 1);
       try {
         localStorage.setItem(
           this.localStorageKey,
