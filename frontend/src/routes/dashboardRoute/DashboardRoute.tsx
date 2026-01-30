@@ -60,8 +60,8 @@ function HangoutCard({
   const Icon = metadata.icon;
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-row gap-6 relative w-full max-w-4xl mx-auto">
-      <div className="flex flex-col items-center justify-center border-r border-gray-100 pr-6 min-w-[60px]">
+    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-row gap-6 relative w-full max-w-4xl mx-auto overflow-hidden">
+      <div className="flex flex-col items-center justify-center border-r border-gray-100 pr-6 md:min-w-[60px] w-[10px]">
         <Tooltip>
           <TooltipTrigger asChild>
             <Button
@@ -88,37 +88,39 @@ function HangoutCard({
         </span>
       </div>
 
-      <div className="flex-1 flex flex-col gap-2">
-        <div className="flex items-center gap-3">
-          <h3 className="text-xl font-bold text-gray-800">
+      <div className="flex-1 flex flex-col gap-2 ">
+        <div className="flex flex-col md:flex-row items-start gap-3">
+          <h3 className="text-xl font-bold text-gray-800 wrap-break-word w-full">
             {hangoutItem.name}
           </h3>
-          <div
-            className={cn(
-              "flex items-center gap-1 px-3 py-1 rounded-full text-white text-xs font-medium",
-              metadata.color,
+          <div className="flex flex-row w-auto md:w-full gap-2 flex-wrap">
+            <div
+              className={cn(
+                "flex items-center gap-1 px-3 py-1 rounded-full text-white text-xs font-medium",
+                metadata.color,
+              )}
+            >
+              <Icon size={12} />
+              <span>{hangoutItem.tag}</span>
+            </div>
+            {hangoutItem.tried && (
+              <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium border border-green-200">
+                <CheckCircle2 size={12} />
+                <span>Tried</span>
+              </div>
             )}
-          >
-            <Icon size={12} />
-            <span>{hangoutItem.tag}</span>
+            {hangoutItem.offline ? (
+              <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-medium border border-amber-200">
+                <MapPin size={12} />
+                <span>Offline</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium border border-blue-200">
+                <Globe size={12} />
+                <span>Online</span>
+              </div>
+            )}
           </div>
-          {hangoutItem.tried && (
-            <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium border border-green-200">
-              <CheckCircle2 size={12} />
-              <span>Tried</span>
-            </div>
-          )}
-          {hangoutItem.offline ? (
-            <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-medium border border-amber-200">
-              <MapPin size={12} />
-              <span>Offline</span>
-            </div>
-          ) : (
-            <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium border border-blue-200">
-              <Globe size={12} />
-              <span>Online</span>
-            </div>
-          )}
         </div>
 
         <div className="flex items-center gap-1 text-blue-500 text-sm">
@@ -133,19 +135,21 @@ function HangoutCard({
           </a>
         </div>
 
-        <p className="text-gray-600 mt-2 text-base leading-relaxed">
-          {hangoutItem.description}
-        </p>
+        <div className="w-full md:flex-row flex justify-between flex-wrap items-center">
+          <p className="text-gray-600 text-base leading-relaxed">
+            {hangoutItem.description}
+          </p>
+          <Button
+            variant="ghost"
+            size="sm"
+            // style={{ margin: "0px !important" }}
+            className=" text-blue-600 font-semibold hover:text-blue-500 hover:bg-blue-50 bg-blue-50 transition-colors w-fit mt-3 md:mt-0"
+            onClick={() => onEdit(hangoutItem)}
+          >
+            Edit
+          </Button>
+        </div>
       </div>
-
-      <Button
-        variant="ghost"
-        size="sm"
-        className="absolute top-6 right-6 text-blue-600 font-semibold hover:text-blue-500 hover:bg-blue-50 transition-colors"
-        onClick={() => onEdit(hangoutItem)}
-      >
-        Edit
-      </Button>
     </div>
   );
 }
