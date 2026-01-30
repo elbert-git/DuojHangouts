@@ -47,10 +47,12 @@ function HangoutCard({
   hangoutItem,
   onEdit,
   onUpvote,
+  isUpvoting,
 }: {
   hangoutItem: HangoutRow;
   onEdit: (item: HangoutRow) => void;
   onUpvote: (id: string) => void;
+  isUpvoting: boolean;
 }) {
   const isUpvoted = UpvoteHistory.isIDInHistory(hangoutItem.id);
   const metadata = TAG_METADATA[hangoutItem.tag.toLowerCase()] || {
@@ -72,9 +74,10 @@ function HangoutCard({
                 isUpvoted
                   ? "text-blue-600 cursor-default"
                   : "text-gray-400 hover:text-blue-600 hover:bg-blue-50",
+                isUpvoting && "animate-pulse opacity-70",
               )}
-              onClick={() => !isUpvoted && onUpvote(hangoutItem.id)}
-              disabled={isUpvoted}
+              onClick={() => !isUpvoted && !isUpvoting && onUpvote(hangoutItem.id)}
+              disabled={isUpvoted || isUpvoting}
             >
               <ThumbsUp size={20} />
             </Button>
@@ -178,6 +181,7 @@ export default function DashboardRoute() {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
+  const [upvotingIds, setUpvotingIds] = useState<Set<string>>(new Set());
 
   const filteredHangouts = useMemo(() => {
     const filtered = hangouts.filter((h) => {
@@ -340,10 +344,12 @@ export default function DashboardRoute() {
   };
 
   const handleUpvote = async (id: string) => {
-    if (UpvoteHistory.isIDInHistory(id)) return;
+    if (UpvoteHistory.isIDInHistory(id) || upvotingIds.has(id)) return;
 
     const hangout = hangouts.find((h) => h.id === id);
     if (!hangout) return;
+
+    setUpvotingIds((prev) => new Set(prev).add(id));
 
     const newUpvotes = (hangout.upvotes || 0) + 1;
 
@@ -372,6 +378,12 @@ export default function DashboardRoute() {
       setHangouts((prev) =>
         prev.map((h) => (h.id === id ? { ...h, upvotes: hangout.upvotes } : h)),
       );
+    } finally {
+      setUpvotingIds((prev) => {
+        const next = new Set(prev);
+        next.delete(id);
+        return next;
+      });
     }
   };
 
@@ -559,6 +571,7 @@ export default function DashboardRoute() {
             hangoutItem={hangout}
             onEdit={openEditEditor}
             onUpvote={handleUpvote}
+            isUpvoting={upvotingIds.has(hangout.id)}
           />
         ))}
         {filteredHangouts.length === 0 && (
