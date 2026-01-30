@@ -4,9 +4,9 @@
     "main": "index.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
-        "ts-watch": "tsc --watch",
+        "ts-watch": "npx tsc --watch",
         "daemon": "nodemon dist/main.js",
-        "build": "tsc",
+        "build": "npx tsc",
         "dev": "npm run build && concurrently \"npm run daemon\"  \"npm run ts-watch\""
     },
     "keywords": [],
@@ -14,16 +14,16 @@
     "license": "ISC",
     "description": "",
     "devDependencies": {
+        "concurrently": "^9.2.1",
+        "nodemon": "^3.0.1"
+    },
+    "dependencies": {
         "@types/bcrypt": "^5.0.2",
         "@types/cors": "^2.8.19",
         "@types/express": "^5.0.6",
         "@types/jsonwebtoken": "^9.0.10",
         "@types/uuid": "^10.0.0",
-        "concurrently": "^9.2.1",
-        "nodemon": "^3.0.1",
-        "typescript": "^5.0.0"
-    },
-    "dependencies": {
+        "typescript": "^5.0.0",
         "bcrypt": "^5.1.1",
         "cors": "^2.8.6",
         "dotenv": "^17.2.3",
