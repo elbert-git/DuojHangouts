@@ -30,8 +30,9 @@ import {
 import HangoutEditor, {
   HangoutFormFields,
 } from "./subComponents/HangoutEditor";
+import { UpvoteHistory } from "../../UpvoteCache";
 
-const PAGE_SIZE_OPTIONS = [2, 6, 12, 18];
+const PAGE_SIZE_OPTIONS = [6, 12, 18];
 const DEFAULT_ITEMS_PER_PAGE = PAGE_SIZE_OPTIONS[0];
 
 const TAG_METADATA: Record<string, { color: string; icon: any }> = {
@@ -44,10 +45,13 @@ const TAG_METADATA: Record<string, { color: string; icon: any }> = {
 function HangoutCard({
   hangoutItem,
   onEdit,
+  onUpvote,
 }: {
   hangoutItem: HangoutRow;
   onEdit: (item: HangoutRow) => void;
+  onUpvote: (id: string) => void;
 }) {
+  const isUpvoted = UpvoteHistory.isIDInHistory(hangoutItem.id);
   const metadata = TAG_METADATA[hangoutItem.tag.toLowerCase()] || {
     color: "bg-gray-500",
     icon: Sparkles,
@@ -62,13 +66,21 @@ function HangoutCard({
             <Button
               variant="ghost"
               size="icon-sm"
-              className="text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
-              onClick={() => console.log("upvote this idea")}
+              className={cn(
+                "transition-colors",
+                isUpvoted
+                  ? "text-blue-600 cursor-default"
+                  : "text-gray-400 hover:text-blue-600 hover:bg-blue-50",
+              )}
+              onClick={() => !isUpvoted && onUpvote(hangoutItem.id)}
+              disabled={isUpvoted}
             >
               <ThumbsUp size={20} />
             </Button>
           </TooltipTrigger>
-          <TooltipContent>upvote this idea</TooltipContent>
+          <TooltipContent>
+            {isUpvoted ? "already upvoted" : "upvote this idea"}
+          </TooltipContent>
         </Tooltip>
         <span className="text-sm font-semibold text-gray-500 mt-1">
           {hangoutItem.upvotes || 0}
@@ -77,7 +89,9 @@ function HangoutCard({
 
       <div className="flex-1 flex flex-col gap-2">
         <div className="flex items-center gap-3">
-          <h3 className="text-xl font-bold text-gray-800">{hangoutItem.name}</h3>
+          <h3 className="text-xl font-bold text-gray-800">
+            {hangoutItem.name}
+          </h3>
           <div
             className={cn(
               "flex items-center gap-1 px-3 py-1 rounded-full text-white text-xs font-medium",
@@ -277,6 +291,42 @@ export default function DashboardRoute() {
     setIsEditorOpen(false);
   };
 
+  const handleUpvote = async (id: string) => {
+    if (UpvoteHistory.isIDInHistory(id)) return;
+
+    const hangout = hangouts.find((h) => h.id === id);
+    if (!hangout) return;
+
+    const newUpvotes = (hangout.upvotes || 0) + 1;
+
+    // Update local state immediately for better UX
+    setHangouts((prev) =>
+      prev.map((h) => (h.id === id ? { ...h, upvotes: newUpvotes } : h)),
+    );
+
+    try {
+      const updatedRow = await API.updateRow(id, { upvotes: newUpvotes });
+      if (updatedRow) {
+        UpvoteHistory.saveId(id);
+        // Ensure local state is in sync with server response
+        setHangouts((prev) => prev.map((h) => (h.id === id ? updatedRow : h)));
+      } else {
+        // Rollback on failure
+        setHangouts((prev) =>
+          prev.map((h) =>
+            h.id === id ? { ...h, upvotes: hangout.upvotes } : h,
+          ),
+        );
+      }
+    } catch (error) {
+      console.error("Failed to upvote:", error);
+      // Rollback on failure
+      setHangouts((prev) =>
+        prev.map((h) => (h.id === id ? { ...h, upvotes: hangout.upvotes } : h)),
+      );
+    }
+  };
+
   return (
     <div className="dashboard w-full min-h-screen pb-20">
       {/* Header section */}
@@ -421,6 +471,7 @@ export default function DashboardRoute() {
             key={hangout.id}
             hangoutItem={hangout}
             onEdit={openEditEditor}
+            onUpvote={handleUpvote}
           />
         ))}
         {filteredHangouts.length === 0 && (

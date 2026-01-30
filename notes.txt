@@ -2,23 +2,11 @@ Status: added pagination
 
 
 todo:
->>> add upvote system
-
-
 >>  add delete feature
 
-> add sorting
 
+> add sorting
 >>> add random page
 
 
 
-
---- planning the upvote system
-create a new object call upvote cache
-on load it load in the json array
-
-UpvoteCache.init()
-UpvoteCache.saveUpvoteRecord(id:string)
-UpvoteCache.checkIfIDExists(id:string)
-UpvoteCache.getUpvoteHistory()
