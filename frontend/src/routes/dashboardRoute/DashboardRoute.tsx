@@ -287,6 +287,10 @@ export default function DashboardRoute() {
     }
   };
 
+  const handleEditorDelete = (id: string) => {
+    setHangouts((prev) => prev.filter((h) => h.id !== id));
+  };
+
   const handleEditorClose = () => {
     setIsEditorOpen(false);
   };
@@ -534,6 +538,7 @@ export default function DashboardRoute() {
         initialValues={editorValues}
         onClose={handleEditorClose}
         onSubmit={handleEditorSubmit}
+        onDelete={handleEditorDelete}
       />
     </div>
   );

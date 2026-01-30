@@ -149,11 +149,33 @@ export class HangoutsSheet {
 
         if (rowIndex === -1) return false;
 
-        const range = `${SHEET_NAME}!A${rowIndex + 2}:K${rowIndex + 2}`;
-
-        await HangoutsSheet.sheets.spreadsheets.values.clear({
+        const spreadsheet = await HangoutsSheet.sheets.spreadsheets.get({
             spreadsheetId: HangoutsSheet.spreadsheetId,
-            range,
+        });
+        const sheet = spreadsheet.data.sheets?.find(
+            (s) => s.properties?.title === SHEET_NAME,
+        );
+        const sheetId = sheet?.properties?.sheetId;
+
+        if (sheetId === undefined)
+            throw new Error(`Sheet '${SHEET_NAME}' not found`);
+
+        await HangoutsSheet.sheets.spreadsheets.batchUpdate({
+            spreadsheetId: HangoutsSheet.spreadsheetId,
+            requestBody: {
+                requests: [
+                    {
+                        deleteDimension: {
+                            range: {
+                                sheetId: sheetId,
+                                dimension: "ROWS",
+                                startIndex: rowIndex + 1,
+                                endIndex: rowIndex + 2,
+                            },
+                        },
+                    },
+                ],
+            },
         });
 
         return true;

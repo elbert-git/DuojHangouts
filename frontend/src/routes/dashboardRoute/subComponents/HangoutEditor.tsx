@@ -18,6 +18,7 @@ interface HangoutEditorProps {
   initialValues: HangoutFormFields;
   onClose: () => void;
   onSubmit: (row: HangoutRow) => void;
+  onDelete?: (id: string) => void;
 }
 
 export default function HangoutEditor({
@@ -27,16 +28,21 @@ export default function HangoutEditor({
   initialValues,
   onClose,
   onSubmit,
+  onDelete,
 }: HangoutEditorProps) {
   const [formValues, setFormValues] = useState(initialValues);
   const [touched, setTouched] = useState({ name: false, description: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteCount, setDeleteCount] = useState(4);
 
   useEffect(() => {
     if (open) {
       setFormValues(initialValues);
       setTouched({ name: false, description: false });
       setIsSubmitting(false);
+      setIsDeleting(false);
+      setDeleteCount(4);
     }
   }, [initialValues, open]);
 
@@ -53,6 +59,33 @@ export default function HangoutEditor({
 
   const toggleBoolean = (field: "tried" | "offline") => {
     setFormValues((prev) => ({ ...prev, [field]: !prev[field] }));
+  };
+
+  const handleDeleteClick = async () => {
+    if (deleteCount > 1) {
+      setDeleteCount((prev) => prev - 1);
+      return;
+    }
+
+    if (!id || !onDelete || isDeleting) return;
+
+    setIsDeleting(true);
+    try {
+      const success = await API.deleteRow(id);
+      if (success) {
+        toast.success("Hangout idea deleted!", { position: "top-center" });
+        onDelete(id);
+        onClose();
+      } else {
+        toast.error("Failed to delete hangout idea. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error deleting hangout:", error);
+      toast.error("An unexpected error occurred.", { position: "top-center" });
+    } finally {
+      setIsDeleting(false);
+      setDeleteCount(4);
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -295,12 +328,33 @@ export default function HangoutEditor({
             </label>
           </div>
 
+          {mode === "edit" && (
+            <button
+              type="button"
+              disabled={isSubmitting || isDeleting}
+              onClick={handleDeleteClick}
+              className="w-full rounded-2xl px-4 py-3 font-medium transition bg-red-50 text-red-600 border border-red-100 hover:bg-red-100 disabled:opacity-50"
+            >
+              {isDeleting ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 size={18} className="animate-spin" /> Deleting...
+                </span>
+              ) : deleteCount === 4 ? (
+                "Delete Idea"
+              ) : (
+                `Click "${deleteCount}" more times to confirm`
+              )}
+            </button>
+          )}
+
           <button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || isDeleting}
             className="w-full rounded-2xl px-4 py-3 font-semibold shadow-lg transition bg-gradient-to-r from-sky-500 to-indigo-500 text-white disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            {isSubmitting && <Loader2 size={18} className="animate-spin" />}
+            {(isSubmitting && !isDeleting) && (
+              <Loader2 size={18} className="animate-spin" />
+            )}
             {mode === "add" ? "Add Idea" : "Save Changes"}
           </button>
         </form>
