@@ -158,6 +158,7 @@ export default function DashboardRoute() {
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [experienceFilter, setExperienceFilter] = useState("All History");
   const [sortBy, setSortBy] = useState("Newest");
+  const [randomSeed, setRandomSeed] = useState(0);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editorMode, setEditorMode] = useState<"add" | "edit">("add");
   const [editingId, setEditingId] = useState<string | undefined>(undefined);
@@ -196,7 +197,18 @@ export default function DashboardRoute() {
       );
     });
 
-    return [...filtered].sort((a, b) => {
+    const sorted = [...filtered];
+
+    if (sortBy === "Random") {
+      // Fisher-Yates shuffle
+      for (let i = sorted.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [sorted[i], sorted[j]] = [sorted[j], sorted[i]];
+      }
+      return sorted;
+    }
+
+    return sorted.sort((a, b) => {
       if (sortBy === "Most Upvoted") {
         return (b.upvotes || 0) - (a.upvotes || 0);
       }
@@ -212,6 +224,7 @@ export default function DashboardRoute() {
     statusFilter,
     experienceFilter,
     sortBy,
+    randomSeed,
   ]);
 
   const totalPages = Math.max(
@@ -235,6 +248,7 @@ export default function DashboardRoute() {
     experienceFilter,
     itemsPerPage,
     sortBy,
+    randomSeed,
   ]);
 
   useEffect(() => {
@@ -504,10 +518,15 @@ export default function DashboardRoute() {
               align="end"
               className="w-44 bg-white border-gray-100 rounded-xl shadow-lg"
             >
-              {["Newest", "Most Upvoted"].map((option) => (
+              {["Newest", "Most Upvoted", "Random"].map((option) => (
                 <DropdownMenuItem
                   key={option}
-                  onClick={() => setSortBy(option)}
+                  onClick={() => {
+                    setSortBy(option);
+                    if (option === "Random") {
+                      setRandomSeed(Math.random());
+                    }
+                  }}
                   className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50"
                 >
                   {option}
