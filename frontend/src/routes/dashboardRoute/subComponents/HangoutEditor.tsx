@@ -141,7 +141,7 @@ export default function HangoutEditor({
       >
         <form
           onSubmit={handleSubmit}
-          className={`w-full max-w-2xl bg-white/90 backdrop-blur-xl border border-white/40 rounded-3xl shadow-2xl p-6 space-y-4 transform transition-all duration-300 ease-out sm:mx-4 ${
+          className={`w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-white/90 backdrop-blur-xl border border-white/40 rounded-3xl shadow-2xl p-6 space-y-4 transform transition-all duration-300 ease-out sm:mx-4 ${
             open ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
           }`}
         >
