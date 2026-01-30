@@ -400,8 +400,8 @@ export default function DashboardRoute() {
       </div>
 
       {/* Controls section */}
-      <div className="max-w-4xl mx-auto px-4 flex flex-col md:flex-row gap-3 mb-8 flex-wrap">
-        <div className="w-full">
+      <div className="max-w-4xl mx-auto px-4 grid grid-cols-2 md:flex md:flex-row gap-3 mb-8 flex-wrap">
+        <div className="col-span-2 w-full">
           <div className="relative flex-1">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-blue-400"
@@ -554,7 +554,7 @@ export default function DashboardRoute() {
 
         <Button
           onClick={openAddEditor}
-          className="  w-full bg-blue-600 hover:bg-blue-700 text-white h-12 px-6 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"
+          className="col-span-2 w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white h-12 px-6 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md active:scale-95"
         >
           <Plus size={20} />
           <span>Add Idea</span>
