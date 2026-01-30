@@ -1,3 +1,5 @@
+import { toast } from "sonner";
+
 export interface HangoutRow {
     id: string;
     name: string;
@@ -180,6 +182,32 @@ export default class API {
             console.error(`Error updating hangout ${id}:`, error);
             return null;
         }
+    }
+
+    static async upvote(id: string): Promise<HangoutRow | null> {
+        const row = await this.getRow(id);
+        if (!row) return null;
+        const result = await this.updateRow(id, { upvotes: (row.upvotes || 0) + 1 });
+        if (result) {
+            toast.success(`Successfully upvoted ${row.name}!`, {
+                position: "top-center",
+            });
+        }
+        return result;
+    }
+
+    static async unUpvote(id: string): Promise<HangoutRow | null> {
+        const row = await this.getRow(id);
+        if (!row) return null;
+        const result = await this.updateRow(id, {
+            upvotes: Math.max(0, (row.upvotes || 0) - 1),
+        });
+        if (result) {
+            toast.success(`Removed upvote from ${row.name}`, {
+                position: "top-center",
+            });
+        }
+        return result;
     }
 
     static async deleteRow(id: string): Promise<boolean> {

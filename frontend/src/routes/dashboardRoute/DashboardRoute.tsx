@@ -72,20 +72,18 @@ function HangoutCard({
               className={cn(
                 "transition-colors",
                 isUpvoted
-                  ? "text-blue-600 cursor-default"
+                  ? "text-blue-600 bg-blue-50 hover:bg-blue-100"
                   : "text-gray-400 hover:text-blue-600 hover:bg-blue-50",
                 isUpvoting && "animate-pulse opacity-70",
               )}
-              onClick={() =>
-                !isUpvoted && !isUpvoting && onUpvote(hangoutItem.id)
-              }
-              disabled={isUpvoted || isUpvoting}
+              onClick={() => !isUpvoting && onUpvote(hangoutItem.id)}
+              disabled={isUpvoting}
             >
               <ThumbsUp size={20} />
             </Button>
           </TooltipTrigger>
           <TooltipContent>
-            {isUpvoted ? "already upvoted" : "upvote this idea"}
+            {isUpvoted ? "remove upvote" : "upvote this idea"}
           </TooltipContent>
         </Tooltip>
         <span className="text-sm font-semibold text-gray-500 mt-1">
@@ -346,14 +344,17 @@ export default function DashboardRoute() {
   };
 
   const handleUpvote = async (id: string) => {
-    if (UpvoteHistory.isIDInHistory(id) || upvotingIds.has(id)) return;
+    if (upvotingIds.has(id)) return;
 
     const hangout = hangouts.find((h) => h.id === id);
     if (!hangout) return;
 
+    const isCurrentlyUpvoted = UpvoteHistory.isIDInHistory(id);
     setUpvotingIds((prev) => new Set(prev).add(id));
 
-    const newUpvotes = (hangout.upvotes || 0) + 1;
+    const newUpvotes = isCurrentlyUpvoted
+      ? Math.max(0, (hangout.upvotes || 0) - 1)
+      : (hangout.upvotes || 0) + 1;
 
     // Update local state immediately for better UX
     setHangouts((prev) =>
@@ -361,9 +362,16 @@ export default function DashboardRoute() {
     );
 
     try {
-      const updatedRow = await API.updateRow(id, { upvotes: newUpvotes });
+      const updatedRow = isCurrentlyUpvoted
+        ? await API.unUpvote(id)
+        : await API.upvote(id);
+
       if (updatedRow) {
-        UpvoteHistory.saveId(id);
+        if (isCurrentlyUpvoted) {
+          UpvoteHistory.removeId(id);
+        } else {
+          UpvoteHistory.saveId(id);
+        }
         // Ensure local state is in sync with server response
         setHangouts((prev) => prev.map((h) => (h.id === id ? updatedRow : h)));
       } else {
@@ -375,7 +383,7 @@ export default function DashboardRoute() {
         );
       }
     } catch (error) {
-      console.error("Failed to upvote:", error);
+      console.error("Failed to toggle upvote:", error);
       // Rollback on failure
       setHangouts((prev) =>
         prev.map((h) => (h.id === id ? { ...h, upvotes: hangout.upvotes } : h)),
