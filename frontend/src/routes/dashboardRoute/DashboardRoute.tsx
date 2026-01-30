@@ -12,6 +12,7 @@ import {
   ChevronDown,
   Globe,
   CheckCircle2,
+  ThumbsUp,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import {
@@ -21,6 +22,11 @@ import {
   DropdownMenuTrigger,
 } from "../../components/ui/dropdown-menu";
 import { Button } from "../../components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "../../components/ui/tooltip";
 import HangoutEditor, {
   HangoutFormFields,
 } from "./subComponents/HangoutEditor";
@@ -49,52 +55,73 @@ function HangoutCard({
   const Icon = metadata.icon;
 
   return (
-    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col gap-2 relative w-full max-w-4xl mx-auto">
-      <div className="flex items-center gap-3">
-        <h3 className="text-xl font-bold text-gray-800">{hangoutItem.name}</h3>
-        <div
-          className={cn(
-            "flex items-center gap-1 px-3 py-1 rounded-full text-white text-xs font-medium",
-            metadata.color,
+    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-row gap-6 relative w-full max-w-4xl mx-auto">
+      <div className="flex flex-col items-center justify-center border-r border-gray-100 pr-6 min-w-[60px]">
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              className="text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+              onClick={() => console.log("upvote this idea")}
+            >
+              <ThumbsUp size={20} />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>upvote this idea</TooltipContent>
+        </Tooltip>
+        <span className="text-sm font-semibold text-gray-500 mt-1">
+          {hangoutItem.upvotes || 0}
+        </span>
+      </div>
+
+      <div className="flex-1 flex flex-col gap-2">
+        <div className="flex items-center gap-3">
+          <h3 className="text-xl font-bold text-gray-800">{hangoutItem.name}</h3>
+          <div
+            className={cn(
+              "flex items-center gap-1 px-3 py-1 rounded-full text-white text-xs font-medium",
+              metadata.color,
+            )}
+          >
+            <Icon size={12} />
+            <span>{hangoutItem.tag}</span>
+          </div>
+          {hangoutItem.tried && (
+            <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium border border-green-200">
+              <CheckCircle2 size={12} />
+              <span>Tried</span>
+            </div>
           )}
-        >
-          <Icon size={12} />
-          <span>{hangoutItem.tag}</span>
+          {hangoutItem.offline ? (
+            <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-medium border border-amber-200">
+              <MapPin size={12} />
+              <span>Offline</span>
+            </div>
+          ) : (
+            <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium border border-blue-200">
+              <Globe size={12} />
+              <span>Online</span>
+            </div>
+          )}
         </div>
-        {hangoutItem.tried && (
-          <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium border border-green-200">
-            <CheckCircle2 size={12} />
-            <span>Tried</span>
-          </div>
-        )}
-        {hangoutItem.offline ? (
-          <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-amber-100 text-amber-700 text-xs font-medium border border-amber-200">
-            <MapPin size={12} />
-            <span>Offline</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-medium border border-blue-200">
-            <Globe size={12} />
-            <span>Online</span>
-          </div>
-        )}
-      </div>
 
-      <div className="flex items-center gap-1 text-blue-500 text-sm">
-        <MapPin size={14} />
-        <a
-          href={hangoutItem.googleLink}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="hover:underline font-medium"
-        >
-          {hangoutItem.location}
-        </a>
-      </div>
+        <div className="flex items-center gap-1 text-blue-500 text-sm">
+          <MapPin size={14} />
+          <a
+            href={hangoutItem.googleLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:underline font-medium"
+          >
+            {hangoutItem.location}
+          </a>
+        </div>
 
-      <p className="text-gray-600 mt-2 text-base leading-relaxed">
-        {hangoutItem.description}
-      </p>
+        <p className="text-gray-600 mt-2 text-base leading-relaxed">
+          {hangoutItem.description}
+        </p>
+      </div>
 
       <Button
         variant="ghost"
