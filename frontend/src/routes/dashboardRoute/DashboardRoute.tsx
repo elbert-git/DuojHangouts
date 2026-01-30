@@ -76,7 +76,9 @@ function HangoutCard({
                   : "text-gray-400 hover:text-blue-600 hover:bg-blue-50",
                 isUpvoting && "animate-pulse opacity-70",
               )}
-              onClick={() => !isUpvoted && !isUpvoting && onUpvote(hangoutItem.id)}
+              onClick={() =>
+                !isUpvoted && !isUpvoting && onUpvote(hangoutItem.id)
+              }
               disabled={isUpvoted || isUpvoting}
             >
               <ThumbsUp size={20} />
@@ -391,10 +393,10 @@ export default function DashboardRoute() {
     <div className="dashboard w-full min-h-screen pb-20">
       {/* Header section */}
       <div className="max-w-4xl mx-auto px-4 pt-12 pb-8">
-        <h1 className="text-center text-5xl font-extrabold text-gray-900 tracking-tight flex items-center justify-center gap-2">
-          Hangout Ideas <span className="text-4xl">🎉</span>
+        <h1 className="text-center text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight flex items-center justify-center gap-2">
+          🎉 Hangout Ideas
         </h1>
-        <p className="text-center text-blue-600 text-lg mt-2 font-medium">
+        <p className="text-center text-blue-600 text-sm md:text-lg mt-2 font-medium">
           Never forget a great idea again
         </p>
       </div>
