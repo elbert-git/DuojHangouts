@@ -19,7 +19,7 @@ type apiStateCache = {
 };
 
 export default class API {
-    static backendUrl = "http://localhost:3000";
+    static backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
     static localStorageKey = "duoj-hangout";
     static stateCache: apiStateCache = {
         accessToken: null,

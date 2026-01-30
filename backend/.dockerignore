@@ -1,0 +1,5 @@
+node_modules
+dist
+.env
+google-key.json
+npm-debug.log
