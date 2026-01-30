@@ -11,7 +11,7 @@ function App() {
     <BrowserRouter>
       <TooltipProvider>
         <Routes>
-          <Route path="/" element={<>Hello</>} />
+          <Route path="/" element={<DashboardRoute />} />
           <Route path="login" element={<LoginRoute />} />
           <Route path="dashboard" element={<DashboardRoute />} />
           <Route path="logout" element={<LogoutRoute />} />

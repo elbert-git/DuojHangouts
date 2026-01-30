@@ -2,8 +2,6 @@ Status: added pagination
 
 
 todo:
-
-> add sorting
 >>> add random page
 
 

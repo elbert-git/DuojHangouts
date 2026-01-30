@@ -13,6 +13,7 @@ import {
   Globe,
   CheckCircle2,
   ThumbsUp,
+  ArrowUpDown,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import {
@@ -156,6 +157,7 @@ export default function DashboardRoute() {
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [statusFilter, setStatusFilter] = useState("All Status");
   const [experienceFilter, setExperienceFilter] = useState("All History");
+  const [sortBy, setSortBy] = useState("Newest");
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [editorMode, setEditorMode] = useState<"add" | "edit">("add");
   const [editingId, setEditingId] = useState<string | undefined>(undefined);
@@ -173,7 +175,7 @@ export default function DashboardRoute() {
   const [itemsPerPage, setItemsPerPage] = useState(DEFAULT_ITEMS_PER_PAGE);
 
   const filteredHangouts = useMemo(() => {
-    return hangouts.filter((h) => {
+    const filtered = hangouts.filter((h) => {
       const matchesSearch =
         h.name.toLowerCase().includes(search.toLowerCase()) ||
         h.description.toLowerCase().includes(search.toLowerCase());
@@ -193,7 +195,24 @@ export default function DashboardRoute() {
         matchesSearch && matchesCategory && matchesStatus && matchesExperience
       );
     });
-  }, [hangouts, search, selectedCategory, statusFilter, experienceFilter]);
+
+    return [...filtered].sort((a, b) => {
+      if (sortBy === "Most Upvoted") {
+        return (b.upvotes || 0) - (a.upvotes || 0);
+      }
+      // Default: Newest (dateCreated)
+      const dateA = a.dateCreated ? new Date(a.dateCreated).getTime() : 0;
+      const dateB = b.dateCreated ? new Date(b.dateCreated).getTime() : 0;
+      return dateB - dateA;
+    });
+  }, [
+    hangouts,
+    search,
+    selectedCategory,
+    statusFilter,
+    experienceFilter,
+    sortBy,
+  ]);
 
   const totalPages = Math.max(
     1,
@@ -209,7 +228,14 @@ export default function DashboardRoute() {
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [search, selectedCategory, statusFilter, experienceFilter, itemsPerPage]);
+  }, [
+    search,
+    selectedCategory,
+    statusFilter,
+    experienceFilter,
+    itemsPerPage,
+    sortBy,
+  ]);
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -451,6 +477,40 @@ export default function DashboardRoute() {
                   className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50"
                 >
                   {exp}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+
+        <div className="relative">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                className="w-full md:w-44 h-12 bg-white border-gray-200 rounded-xl flex items-center justify-between text-gray-700 hover:bg-gray-50 transition-colors shadow-sm font-normal"
+              >
+                <div className="flex items-center gap-2 truncate">
+                  <ArrowUpDown size={14} className="text-gray-400" />
+                  <span>{sortBy}</span>
+                </div>
+                <ChevronDown
+                  size={18}
+                  className="text-gray-400 opacity-50 flex-shrink-0"
+                />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="end"
+              className="w-44 bg-white border-gray-100 rounded-xl shadow-lg"
+            >
+              {["Newest", "Most Upvoted"].map((option) => (
+                <DropdownMenuItem
+                  key={option}
+                  onClick={() => setSortBy(option)}
+                  className="cursor-pointer hover:bg-gray-50 focus:bg-gray-50"
+                >
+                  {option}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
